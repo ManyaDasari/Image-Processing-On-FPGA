@@ -55,7 +55,7 @@ module tb(
     #100;
     reset = 1;
     #100;
-    file = $fopen("C:/Users/Hemanth Jetti/Desktop/Manya/Image Processing/Test Images/Test_Img.bmp","rb");
+     file = $fopen("Test_Img.bmp","rb");              //or provide full path of the image 
     file1 = $fopen("blurred_test.bmp","wb");
     for(i=0;i<`headerSize;i=i+1)
     begin
