@@ -41,7 +41,7 @@ initial
 begin
     for(i=0;i<9;i=i+1)
     begin
-        kernel[i] = 1;
+        kernel[i] = 1;              //kernel for blurring; 
     end
 end    
     
