@@ -25,21 +25,22 @@ input                    i_clk,
 input                    i_rst,
 input [7:0]              i_pixel_data,
 input                    i_pixel_data_valid,
-output reg [71:0]        o_pixel_data,
+           output reg [71:0]        o_pixel_data,                 //input to convolution.v
 output                   o_pixel_data_valid,
 output reg               o_intr
 );
 
-reg [8:0] pixelCounter;
-reg [1:0] currentWrLineBuffer;
-reg [3:0] lineBuffDataValid;
+reg [8:0] pixelCounter;                   // for keeping count on writing pixel data to line buffer
+reg [1:0] currentWrLineBuffer;                     //represents 0,1,2,3 LB's in which data has to be written
+reg [3:0] lineBuffDataValid;                       // to decide which Lb to write values to
 reg [3:0] lineBuffRdData;
-reg [1:0] currentRdLineBuffer;
+reg [1:0] currentRdLineBuffer;                     //represents 0,1,2,3 LB's in which data has to be written
+reg [3:0] lineBuffRdData;                          // to decide which Lb to read values from
 wire [23:0] lb0data;
 wire [23:0] lb1data;
 wire [23:0] lb2data;
 wire [23:0] lb3data;
-reg [8:0] rdCounter;
+reg [8:0] rdCounter;                     //for keeping count on which line to read from (convolut)
 reg rd_line_buffer;
 reg [11:0] totalPixelCounter;
 reg rdState;
@@ -62,13 +63,13 @@ begin
     end
 end
 
-always @(posedge i_clk)
+always @(posedge i_clk)                                //state machine for control signal of dma
 begin
     if(i_rst)
     begin
         rdState <= IDLE;
         rd_line_buffer <= 1'b0;
-        o_intr <= 1'b0;
+        o_intr <= 1'b0;                              //intr for dma controller
     end
     else
     begin
@@ -123,6 +124,8 @@ begin
     lineBuffDataValid[currentWrLineBuffer] = i_pixel_data_valid;
 end
 
+           // reading data from linebuffer and giving input to convolution.v
+           
 always @(posedge i_clk)
 begin
     if(i_rst)
@@ -166,8 +169,8 @@ begin
     endcase
 end
 
-always @(*)
-begin
+always @(*)                                     //2x4 mux, control sgnal=[1:0]currentRdLineBuffer
+begin                                           //control signal controlled by state machine
     case(currentRdLineBuffer)
         0:begin
             lineBuffRdData[0] = rd_line_buffer;
